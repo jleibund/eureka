@@ -217,6 +217,18 @@ public abstract class AbstractInstanceConfig implements EurekaInstanceConfig {
         Pair<String, String> pair;
         try {
             InetAddress localHost = InetAddress.getLocalHost();
+            if (localHost.isLinkLocalAddress()) {
+                throw new UnknownHostException("found link-local address: "+localHost.getHostAddress());
+            }
+            if (localHost.isAnyLocalAddress()) {
+                throw new UnknownHostException("found any local address: "+localHost.getHostAddress());
+            }
+            if (localHost.isMulticastAddress()) {
+                throw new UnknownHostException("found multicast address: "+localHost.getHostAddress());
+            }
+            if (localHost.isLoopbackAddress()) {
+                throw new UnknownHostException("found loopback address: "+localHost.getHostAddress());
+            }
             pair = new Pair<String, String>(localHost.getHostAddress(), localHost.getHostName());
         } catch (UnknownHostException e) {
             logger.error("Cannot get host info", e);
